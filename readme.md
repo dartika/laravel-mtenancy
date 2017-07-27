@@ -2,7 +2,43 @@
 
 Multi tenancy package for laravel applications (multi-database)
 
-### Available commands
+## Instalation
+
+### Composer
+
+Install this package with composer:
+
+```
+composer require dartika/laravel-mtenancy
+```
+### Service Provider
+
+Add this provider to your config/app.php:
+
+```
+'providers' => [
+    // ...
+    Dartika\MultiTenancy\TenantServiceProvider::class,
+]
+```
+
+### Database and Migrations
+
+### Public Assets
+
+To bind the public assets url to public tenant's files, use this in your nginx vhost:
+
+```
+server_name ~^(?<subdomain>\w+)\.yourdomain.com;
+
+location /files/ {
+    rewrite ^(.*?)$ /../storage/app/tenants/$subdomain/public/$1 break;
+}
+```
+
+----------
+
+#### Available commands
 
 ```sh
 $ php artisan tenant:list
