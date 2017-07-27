@@ -11,7 +11,8 @@ class TenantRollbackCommand extends TenantBaseCommand
      *
      * @var string
      */
-    protected $signature = 'tenant:rollback {tenant?}';
+    protected $signature = 'tenant:rollback {tenant? : The name of the tenant} 
+                {--force : Force the operation to run when in production.}';
 
     /**
      * The console command description.

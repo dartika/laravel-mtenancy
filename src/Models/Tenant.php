@@ -14,12 +14,13 @@ class Tenant extends Model
 
     public function isActive()
     {
-        return \DB::getDefaultConnection() === 'tenant' && config('database.connections.tenant.database') === $this->dbdatabase;
+        return $this === \App::make('tenant')->getActive();
     }
 
     public function setActive()
     {
         $this->setDatabase();
+        $this->setPublicPath();
         $this->setLogFile();
 
         \App::make('tenant')->setActive($this);
@@ -32,12 +33,15 @@ class Tenant extends Model
             'database.connections.tenant.password' => $this->dbpassword,
             'database.connections.tenant.database' => $this->dbdatabase,
 
-            'filesystems.disks.tenant.root' => $this->path('/public/files'),
-
-            'constants.broadcast_url' => $this->name . '.wopr.broadcastchannel.',
+            'constants.broadcast_url' => $this->name . '.wopr.broadcastchannel.', // remove old dependency
         ]);
 
         \DB::setDefaultConnection('tenant');
+    }
+
+    protected function setPublicPath()
+    {
+        config(['filesystems.disks.local.root' => $this->path('/public/files')]);
     }
 
     protected function setLogFile()
@@ -75,23 +79,23 @@ class Tenant extends Model
         return file_exists($backupFile);
     }
 
-    public function migrate($seed = false)
+    public function migrate($options = [])
     {
-        return $this->doMigration($seed, false);
-    }
-
-    public function migrateAsDemo()
-    {
-        return $this->doMigration(true, true);
-    }
-
-    private function doMigration($seed, $refresh)
-    {
-        $migrationCommand = $refresh ? 'migrate:refresh' : 'migrate';
+        $options['--path'] = 'database/migrations/tenants'; // config('laravel-mtenancy.migrations_path')
 
         if ($this->isActive()) {
-            \Artisan::call($migrationCommand, array('--force' => true, '--path' => 'database/migrations/tenants', '--seed' => $seed));
-            return true;
+            return \Artisan::call('migrate', $options);
+        } else {
+            throw new \Exception("Error: Tenant is not active", 1);
+        }
+    }
+
+    public function migrateFresh($options = [])
+    {
+        $options['--path'] = 'database/migrations/tenants'; // config('laravel-mtenancy.migrations_path')
+
+        if ($this->isActive()) {
+            return \Artisan::call('migrate:refresh', $options);
         } else {
             throw new \Exception("Error: Tenant is not active", 1);
         }
