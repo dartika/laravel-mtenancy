@@ -58,22 +58,9 @@ class TenantCreateCommand extends Command
 
             if ($tenant) {
                 $tenant->setActive();
-                $tenant->migrate();
+                $tenant->migrate([ '--force' => true ]);
 
-                // specific code, delete or delegate it
-
-                // prompts
-                $departmentName = $this->ask('Enter the default Department\'s name.', 'Administrators');
-                $adminEmail = $this->ask('Enter the default admin user email.');
-                $adminPassword = $this->secret('Enter the default admin user password.', 'wopr');
-                
-                $user = \App\Models\User::create([
-                    'email' => $adminEmail,
-                    'password' => bcrypt($adminPassword),
-                    'department_id' => \App\Models\Department::create(['name' => $departmentName])->id
-                ]);
-
-                $user->attachRole(\App\Models\Role::where('name', 'admin')->first());
+                event(new \Dartika\MultiTenancy\Events\TenantCreated($tenant, $this));
             } else {
                 $this->error('Error: Unknow error at Tenant creation');
             }
