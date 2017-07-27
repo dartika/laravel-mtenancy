@@ -49,7 +49,7 @@ class Tenant extends Model
 
     public function path($path = '')
     {
-        return base_path('/tenants/' . $this->name) . $path;
+        return storage_path('app/tenants/' . $this->name) . $path;
     }
 
     public function erase()
