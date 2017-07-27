@@ -3,6 +3,7 @@
 namespace Dartika\MultiTenancy\Console\Commands;
 
 use Dartika\MultiTenancy\Models\Tenant;
+use Dartika\MultiTenancy\TenantCreator;
 use Illuminate\Console\Command;
 
 class TenantCreateCommand extends Command
@@ -53,18 +54,19 @@ class TenantCreateCommand extends Command
                 $existingTenant->erase();
             }
 
-            $tenant = Tenant::generate($tenantName);
+            $tenant = TenantCreator::create($tenantName);
 
             if ($tenant) {
-                // prompts
-                $departmentName = $this->ask('Enter the default Department\'s name.', 'Administrators');
-                $adminEmail = $this->ask('Enter the default admin user email.');
-                $adminPassword = $this->secret('Enter the default admin user password.', 'wopr');
-
                 $tenant->setActive();
                 $tenant->migrate();
 
                 // specific code, delete or delegate it
+
+                // prompts
+                $departmentName = $this->ask('Enter the default Department\'s name.', 'Administrators');
+                $adminEmail = $this->ask('Enter the default admin user email.');
+                $adminPassword = $this->secret('Enter the default admin user password.', 'wopr');
+                
                 $user = \App\Models\User::create([
                     'email' => $adminEmail,
                     'password' => bcrypt($adminPassword),
