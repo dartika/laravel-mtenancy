@@ -19,12 +19,15 @@ class TenantCreator
             'dbpassword' => str_random(40)
         ]);
 
-        if ($tenant) {
-            self::createDatabase($tenant);
-            self::createFolderStructure($tenant);
-        } else {
+        if (!$tenant) {
             throw new \Exception("Error: Tenant's creation fail to store on database", 1);
         }
+
+        self::createDatabase($tenant);
+        self::createFolderStructure($tenant);
+        
+        $tenant->setActive();
+        $tenant->migrate([ '--force' => true ]);
 
         return $tenant;
     }

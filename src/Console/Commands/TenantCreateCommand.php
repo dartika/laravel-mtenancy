@@ -56,18 +56,15 @@ class TenantCreateCommand extends Command
 
             $tenant = TenantCreator::create($tenantName);
 
-            if ($tenant) {
-                $tenant->setActive();
-                $tenant->migrate([ '--force' => true ]);
-
-                event(new \Dartika\MultiTenancy\Events\TenantCreated($tenant, $this));
-            } else {
-                $this->error('Error: Unknow error at Tenant creation');
+            if (!$tenant) {
+                return $this->error('Error: Unknow error at Tenant creation');
             }
 
-            $this->info('Tenant created!');
+            event(new \Dartika\MultiTenancy\Events\TenantCreated($tenant, $this));
+
+            return $this->info('Tenant created!');
         } else {
-            $this->error('Error: Tenant\'s name already in use');
+            return $this->error('Error: Tenant\'s name already in use');
         }
     }
 }
