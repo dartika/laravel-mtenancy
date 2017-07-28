@@ -1,6 +1,6 @@
 <?php 
 
-namespace Dartika\MultiTenancy;
+namespace Dartika\MultiTenancy\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -13,6 +13,6 @@ class TenantFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'tenant';
+        return 'tenantManager';
     }
 }
