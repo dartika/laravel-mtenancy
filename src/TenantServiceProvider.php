@@ -24,9 +24,17 @@ class TenantServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app['tenant']->boot();
+        $this->publishes([
+            __DIR__ . '/../config/laravel-mtenancy.php' => config_path('laravel-mtenancy.php'),
+        ], 'config');
+
+        $this->publishes([
+            __DIR__ . '/../database/migrations/create_tenants_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_tenants_table.php'),
+        ], 'migrations');
 
         $this->registerConsoleCommands();
+
+        TenantBootstrap::boot($this->app);
     }
 
     /**
@@ -36,7 +44,9 @@ class TenantServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('tenant', function ($app) {
+        $this->mergeConfigFrom(__DIR__ .' /../config/laravel-mtenancy.php', 'laravel-mtenancy');
+
+        $this->app->singleton('tenantManager', function ($app) {
             return new TenantManager($app);
         });
     }
