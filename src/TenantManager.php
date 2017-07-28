@@ -17,6 +17,7 @@ class TenantManager
     public function setActive(Tenant $tenant)
     {
         $this->activeTenant = $tenant;
+        event(new \Dartika\MultiTenancy\Events\TenantActivated($tenant));
     }
 
     public function tenant()
