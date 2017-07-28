@@ -38,9 +38,7 @@ class Tenant extends Model
         config([
             'database.connections.tenant.username' => $this->dbusername,
             'database.connections.tenant.password' => $this->dbpassword,
-            'database.connections.tenant.database' => $this->dbdatabase,
-
-            'constants.broadcast_url' => $this->name . '.wopr.broadcastchannel.', // remove old dependency
+            'database.connections.tenant.database' => $this->dbdatabase
         ]);
 
         DB::setDefaultConnection('tenant');
