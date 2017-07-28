@@ -11,8 +11,7 @@ class TenantRollbackCommand extends TenantBaseCommand
      *
      * @var string
      */
-    protected $signature = 'tenant:rollback {tenant? : The name of the tenant} 
-                {--force : Force the operation to run when in production.}';
+    protected $signature = 'tenant:rollback {tenant? : The name (subdomain) of the tenant}';
 
     /**
      * The console command description.
@@ -37,7 +36,7 @@ class TenantRollbackCommand extends TenantBaseCommand
 
     public function handleTenantCommand(Tenant $tenant)
     {
-        $tenant->rollbackMigration();
+        $tenant->rollbackMigration([ '--force' => true, '--step' => 1 ]);
         $this->info('"' . $tenant->name . '" Rollback!');
     }
 }

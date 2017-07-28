@@ -11,8 +11,7 @@ class TenantMigrateCommand extends TenantBaseCommand
      *
      * @var string
      */
-    protected $signature = 'tenant:migrate {tenant? : The name of the tenant} 
-                {--force : Force the operation to run when in production.}';
+    protected $signature = 'tenant:migrate {tenant? : The name (subdomain) of the tenant}';
 
     /**
      * The console command description.
@@ -23,7 +22,7 @@ class TenantMigrateCommand extends TenantBaseCommand
 
     public function handleTenantCommand(Tenant $tenant)
     {
-        $tenant->migrate([ '--force' => $this->option('force') ]);
+        $tenant->migrate([ '--force' => true ]);
         $this->info('"' . $tenant->name . '" Migrated!');
     }
 }
