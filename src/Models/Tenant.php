@@ -3,11 +3,11 @@
 namespace Dartika\MultiTenancy\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Dartika\MultiTenancy\Exceptions\TenantInactiveException;
 
 use Artisan;
 use Carbon\Carbon;
 use DB;
-use Exception;
 use File;
 use Log;
 
@@ -116,7 +116,7 @@ class Tenant extends Model
     protected function checkTenantIsActive()
     {
         if (!$this->isActive()) {
-            throw new Exception("Error: Tenant is not active", 1);
+            throw new TenantInactiveException("Tenant '{$this->name}' is not active");
         }
     }
 }

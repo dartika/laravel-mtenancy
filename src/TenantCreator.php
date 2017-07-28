@@ -3,12 +3,13 @@
 namespace Dartika\MultiTenancy;
 
 use Dartika\MultiTenancy\Models\Tenant;
+use Dartika\MultiTenancy\Exceptions\TenantCreationException;
 
 class TenantCreator
 {
     public static function create($name)
     {
-        $dbhost = env('DB_HOST', 'localhost');
+        $dbhost = env('DB_HOST', 'localhost'); // TODO: Remove env call
 
         $tenant = Tenant::create([
             'name'       => $name,
@@ -20,7 +21,7 @@ class TenantCreator
         ]);
 
         if (!$tenant) {
-            throw new \Exception("Error: Tenant's creation fail to store on database", 1);
+            throw new TenantCreationException("Tenant's creation fail to store on database");
         }
 
         self::createDatabase($tenant);
@@ -40,7 +41,7 @@ class TenantCreator
             \DB::statement("GRANT ALL PRIVILEGES ON " . $tenant->dbdatabase . ".* TO '" . $tenant->dbusername . "'@'%'");
             \DB::statement("FLUSH PRIVILEGES");
         } else {
-            throw new \Exception("Error: Tenant's database already exists", 1);
+            throw new TenantCreationException("Tenant's database already exists");
         }
     }
 
@@ -58,7 +59,7 @@ class TenantCreator
             \File::makeDirectory($tenant->path('/public'), 0777, true, true);
             \File::makeDirectory($tenant->path('/logs'), 0777, true, true);
         } else {
-            throw new \Exception("Error: Tenant's folder already exists", 1);
+            throw new TenantCreationException("Tenant's folder already exists");
         }
     }
 }
