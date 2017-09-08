@@ -1,6 +1,11 @@
 {
     "name": "dartika/laravel-mtenancy",
     "description": "Multi tenancy package for laravel applications",
+    "keywords": [
+        "laravel",
+        "multi tenancy",
+        "tenancy"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -9,8 +14,7 @@
         }
     ],
     "require": {
-        "php": ">=5.6.4",
-        "laravel/framework": "5.*"
+        "php": ">=5.6.4"
     },
     "require-dev": {
     },
@@ -18,5 +22,15 @@
         "psr-4": {
             "Dartika\\MultiTenancy\\": "src"
         }
-    }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dartika\\MultiTenancy\\TenantServiceProvider"
+            ],
+            "aliases": {
+                "Tenant": "Dartika\\MultiTenancy\\TenantFacade"
+            }
+        }
+    },
 }
