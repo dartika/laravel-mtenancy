@@ -15,14 +15,12 @@ composer require dartika/laravel-mtenancy
 
 Add this provider to your config/app.php:
 
-```php
+```
 'providers' => [
     // ...
     Dartika\MultiTenancy\TenantServiceProvider::class,
 ]
 ```
-
-    For Laravel > 5.5: With the autodiscovery "magic" you don't have to add this provider manually.
 
 ### Database and Migrations
 
