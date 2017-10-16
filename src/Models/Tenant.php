@@ -99,7 +99,7 @@ class Tenant extends Model
 
         $options['--path'] = config('laravel-mtenancy.migrations_path');
         
-        return Artisan::call('migrate:refresh', $options);
+        return Artisan::call('migrate:fresh', $options);
     }
 
     public function rollbackMigration($options = [])
