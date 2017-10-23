@@ -59,3 +59,8 @@ $ php artisan tenant:delete tenant_name
 $ php artisan tenant:migrate [tenant_name]
 # Migrate tenant/s
 ```
+
+```sh
+$ php artisan tenant:tinker [tenant_name]
+# Open tinker with tenant activated. (NOTE: Tinker must be available in project)
+```

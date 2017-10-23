@@ -15,6 +15,7 @@ class TenantServiceProvider extends ServiceProvider
         \Dartika\MultiTenancy\Console\Commands\TenantMigrateCommand::class,
         \Dartika\MultiTenancy\Console\Commands\TenantRollbackCommand::class,
         \Dartika\MultiTenancy\Console\Commands\TenantBackupCommand::class,
+        \Dartika\MultiTenancy\Console\Commands\TenantTinkerCommand::class,
     ];
 
     /**
