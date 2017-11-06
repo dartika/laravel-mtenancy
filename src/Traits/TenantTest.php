@@ -2,6 +2,9 @@
 
 namespace Dartika\MultiTenancy\Traits;
 
+use Dartika\MultiTenancy\Facades\TenantFacade;
+use File;
+
 trait TenantTest {
     /**
      * Override artisan command to use tenant migration path
@@ -17,5 +20,10 @@ trait TenantTest {
         }
 
         return parent::artisan($command, $parameters);
+    }
+
+    public function tearDownTenantTest()
+    {
+        File::deleteDirectory(TenantFacade::tenant()->path()); // remove assets testing
     }
 }
