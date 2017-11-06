@@ -9,6 +9,20 @@ class TenantBootstrap
 {
     public static function boot($app)
     {
+        if ($app->environment('testing')) {
+            // temporal tenant for testing
+            $tenant = new Tenant([
+                'name' => 'testing',
+                'subdomain' => 'testing',
+                'dbhost' => config('database.connections.tenant.host'),
+                'dbdatabase' => config('database.connections.tenant.database'),
+                'dbusername' => config('database.connections.tenant.username'),
+                'dbpassword' => config('database.connections.tenant.password'),
+            ]);
+
+            return $tenant->setActive();
+        }
+
         if (!$app->runningInConsole()) {
             $subdomain = self::getTenantSubdomain($app->request);
             $tenant = Tenant::whereSubdomain($subdomain)->first();
