@@ -1,6 +1,6 @@
 <?php
 
-namespace Dartika\Traits;
+namespace Dartika\MultiTenancy\Traits;
 
 trait TenantTest {
     /**
