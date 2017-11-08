@@ -14,7 +14,7 @@ use Log;
 class Tenant extends Model
 {
     protected $table = 'tenants';
-    
+
     protected $fillable = [
         'name', 'subdomain', 'dbhost', 'dbdatabase', 'dbusername', 'dbpassword'
     ];
@@ -74,14 +74,32 @@ class Tenant extends Model
 
     public function backup()
     {
-        File::makeDirectory($this->path('/backups'), 0775, true, true);
+        File::makeDirectory($this->backupPath(), 0775, true, true);
 
         $backupFile = $this->path('/backups/bk_' . $this->name . '_' . Carbon::now() . '.sql');
         $command = sprintf('mysqldump -u %s -p%s %s -h %s  --skip-comments > \'%s\' 2>/dev/null', $this->dbusername, $this->dbpassword, $this->dbdatabase, env('DB_HOST', 'localhost'), $backupFile);
-        
+
         exec($command);
 
         return file_exists($backupFile);
+    }
+
+    public function backupPath()
+    {
+        return $this->path('/backups');
+    }
+
+    public function cleanBackups(int $days = 15)
+    {
+        $limitDate = Carbon::now()->subDays($days);
+
+        collect(File::allFiles($this->backupPath()))
+            ->filter(function ($file) use ($limitDate) {
+                return Carbon::createFromTimestamp(filemtime($file))->lt($limitDate);
+            })
+            ->each(function($file) {
+                File::delete($file);
+            });
     }
 
     public function migrate($options = [])
@@ -89,7 +107,7 @@ class Tenant extends Model
         $this->checkTenantIsActive();
 
         $options['--path'] = config('laravel-mtenancy.migrations_path');
-        
+
         return Artisan::call('migrate', $options);
     }
 
@@ -98,7 +116,7 @@ class Tenant extends Model
         $this->checkTenantIsActive();
 
         $options['--path'] = config('laravel-mtenancy.migrations_path');
-        
+
         return Artisan::call('migrate:fresh', $options);
     }
 
