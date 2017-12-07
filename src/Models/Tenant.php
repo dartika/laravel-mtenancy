@@ -102,22 +102,36 @@ class Tenant extends Model
             });
     }
 
-    public function migrate($options = [])
+    public function migrate($options = [], $secureMigration = false)
     {
         $this->checkTenantIsActive();
 
         $options['--path'] = config('laravel-mtenancy.migrations_path');
+
+        if($secureMigration && $this->checkMigration($options)) {
+            $this->backup($options);
+        }
 
         return Artisan::call('migrate', $options);
     }
 
-    public function migrateFresh($options = [])
+    public function migrateFresh($options = [], $secureMigration = false)
     {
         $this->checkTenantIsActive();
 
         $options['--path'] = config('laravel-mtenancy.migrations_path');
 
+        if($secureMigration) {
+            $this->backup();
+        }
+
         return Artisan::call('migrate:fresh', $options);
+    }
+
+    public function checkMigration($options)
+    {
+        Artisan::call('migrate', array_merge($options, ['--pretend' => true]));
+        return trim(Artisan::output()) !== 'Nothing to migrate.';
     }
 
     public function rollbackMigration($options = [])
