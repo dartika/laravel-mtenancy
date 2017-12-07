@@ -56,8 +56,18 @@ $ php artisan tenant:delete tenant_name
 ```
 
 ```sh
-$ php artisan tenant:migrate [tenant_name]
-# Migrate tenant/s
+$ php artisan tenant:migrate [tenant_name] [--secure]
+# Migrate tenant/s (and backup tenant if --secure flag is enabled and there is a migrations)
+```
+
+```sh
+$ php artisan tenant:backup [tenant_name]
+# Backup tenant (to tenant/backups path)
+```
+
+```sh
+$ php artisan tenant:backup-clean [tenant_name] [--days=15]
+# Clean tenant backups keeping the latest "--days" backups 
 ```
 
 ```sh
