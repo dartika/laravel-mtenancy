@@ -28,7 +28,6 @@ class Tenant extends Model
     {
         $this->setDatabase();
         $this->setPublicPath();
-        $this->setLogFile();
 
         app()->make('tenantManager')->setActive($this);
     }
@@ -47,13 +46,6 @@ class Tenant extends Model
     protected function setPublicPath()
     {
         config(['filesystems.disks.local.root' => $this->path('/public/files')]);
-    }
-
-    protected function setLogFile()
-    {
-        if (!app()->runningInConsole()) {
-            Log::useDailyFiles($this->path('/logs/log_' . $this->name . '.log'));
-        }
     }
 
     public function path($path = '')
