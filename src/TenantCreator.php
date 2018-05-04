@@ -56,7 +56,7 @@ class TenantCreator
         if (!\File::exists($tenant->path())) {
             umask(0);
             \File::makeDirectory($tenant->path(), 0775, true, true);
-            \File::makeDirectory($tenant->path('/public'), 0777, true, true);
+            \File::makeDirectory($tenant->path('/public/files'), 0777, true, true);
             \File::makeDirectory($tenant->path('/logs'), 0777, true, true);
         } else {
             throw new TenantCreationException("Tenant's folder already exists");
