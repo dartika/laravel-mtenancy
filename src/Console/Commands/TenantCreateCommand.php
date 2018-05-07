@@ -51,7 +51,7 @@ class TenantCreateCommand extends Command
 
         if (!$existingTenant || $this->confirm('Tenant\'s name already in use, overwrite? (this will erase all data, backups, files, ...)')) {
             if ($existingTenant) {
-                $existingTenant->erase();
+                $existingTenant->delete();
             }
 
             $tenant = TenantCreator::create($tenantName);

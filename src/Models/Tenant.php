@@ -2,6 +2,7 @@
 
 namespace Dartika\MultiTenancy\Models;
 
+use Dartika\MultiTenancy\Events\TenantDeleted;
 use Illuminate\Database\Eloquent\Model;
 use Dartika\MultiTenancy\Exceptions\TenantInactiveException;
 
@@ -18,6 +19,18 @@ class Tenant extends Model
     protected $fillable = [
         'name', 'subdomain', 'dbhost', 'dbdatabase', 'dbusername', 'dbpassword'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function ($tenant) {
+            $tenant->dropDatabase();
+            $tenant->deleteFiles();
+
+            event(new TenantDeleted($tenant));
+        });
+    }
 
     public function isActive()
     {
@@ -53,15 +66,16 @@ class Tenant extends Model
         return storage_path('app/tenants/' . $this->name) . $path;
     }
 
-    public function erase()
+    public function dropDatabase()
     {
         DB::statement("DROP DATABASE IF EXISTS " . $this->dbdatabase);
         DB::statement("GRANT USAGE ON *.* TO '" . $this->dbusername . "'@'%' IDENTIFIED BY 'password'"); // if don't exists, create to drop
         DB::statement("DROP USER '" . $this->dbusername . "'@'%'");
+    }
 
+    public function deleteFiles()
+    {
         File::deleteDirectory($this->path());
-
-        $this->delete();
     }
 
     public function backup()
@@ -89,7 +103,7 @@ class Tenant extends Model
             ->filter(function ($file) use ($limitDate) {
                 return Carbon::createFromTimestamp(filemtime($file))->lt($limitDate);
             })
-            ->each(function($file) {
+            ->each(function ($file) {
                 File::delete($file);
             });
     }
@@ -100,7 +114,7 @@ class Tenant extends Model
 
         $options['--path'] = config('laravel-mtenancy.migrations_path');
 
-        if($secureMigration && $this->checkMigration($options)) {
+        if ($secureMigration && $this->checkMigration($options)) {
             $this->backup($options);
         }
 
@@ -113,7 +127,7 @@ class Tenant extends Model
 
         $options['--path'] = config('laravel-mtenancy.migrations_path');
 
-        if($secureMigration) {
+        if ($secureMigration) {
             $this->backup();
         }
 

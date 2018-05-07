@@ -44,7 +44,7 @@ class TenantDeleteCommand extends Command
 
         if ($tenant) {
             if ($this->confirm('Delete "' . $tenant->name . '"" Tenant? (this will erase all data, backups, files, ...)')) {
-                $tenant->erase();
+                $tenant->delete();
                 
                 $this->info('Tenant deleted!');
             } else {
