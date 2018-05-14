@@ -39,14 +39,6 @@ class TenantBootstrap
     {
         $subdomain = str_before($request->getHost(), '.'); // TODO: Check subdomain vs domain (empty subdomain). domain config var?
 
-        if ($broadcastChannel = $request->get('channel_name')) {  // broadcasting
-            preg_match('/^private-private-(.*?)\./', $broadcastChannel, $match);
-
-            if (isset($match[1])) {
-                $subdomain = $match[1];
-            }
-        }
-
         return $subdomain;
     }
 }
